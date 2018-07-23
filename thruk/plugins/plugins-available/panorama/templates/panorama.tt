@@ -1,0 +1,58 @@
+﻿[% USE date %]
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script type="text/javascript">
+    <!--
+    [%+ PROCESS _panorama_js_globals.tt +%]
+    -->
+    </script>
+    [% PROCESS custom_perf_bar_adjustments.tt %]
+    <title>[% title_prefix %][% title %]</title>
+    <link rel="shortcut icon" href="[% url_prefix %]themes/[% theme %]/images/favicon.ico" type="image/ico" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="[% url_prefix %]plugins/panorama/extjs-[% extjs_version %]/resources/css/ext-all-gray.css">
+    <link rel='stylesheet' type='text/css' href='[% url_prefix %]plugins/panorama/panorama-[% version %]-[% filebranch %].css' />
+    [% IF thruk_debug %]
+      <script type="text/javascript" charset="UTF-8" src="[% url_prefix %]plugins/panorama/extjs-[% extjs_version %]/ext-all-debug.js"></script>
+    [% ELSE %]
+      <script type="text/javascript" charset="UTF-8" src="[% url_prefix %]plugins/panorama/extjs-[% extjs_version %]/ext-all.js"></script>
+    [% END %]
+    [% IF thruk_debug || panorama_debug %]
+      [% FOREACH js = all_in_one_javascript_panorama %]
+        <script type="text/javascript" charset="UTF-8" src="[% url_prefix %][% js %]"></script>
+      [% END %]
+      [% FOREACH js = get_static_panorama_files(c.config) %]
+        <script type="text/javascript" charset="UTF-8" src="[% url_prefix %][% js %]"></script>
+      [% END %]
+      <script type="text/javascript" charset="UTF-8" src="[% url_prefix %]plugins/panorama/js/panorama_js_track_timers.js"></script>
+    [% ELSE %]
+      <script type="text/javascript" charset="UTF-8" src="[% url_prefix %]plugins/panorama/all_in_one-[% version %]-[% filebranch %]_panorama.js"></script>
+    [% END %]
+</head>
+<body onunload="TP.unload()">
+<div id="iconContainer"></div>
+<script type="text/javascript">
+<!--
+/*
+console.profile("Page Load Profile");
+window.setTimeout(function() {
+    console.profileEnd();
+}, 5000);
+*/
+
+[%+ PROCESS panorama_js.tt +%]
+
+function preloader() {
+    if(document.images) {
+        var img_url = url_prefix+'plugins/panorama/images/';
+        /* no var here, otherwise browser would clean the preloaded images from cache */
+[%+ FOREACH i = preload_img %]
+        img[% loop.index %] = new Image(); img[% loop.index %].src = img_url+"[% i %]";
+[%+ END %]
+    }
+}
+-->
+</script>
+</body>
+</html>

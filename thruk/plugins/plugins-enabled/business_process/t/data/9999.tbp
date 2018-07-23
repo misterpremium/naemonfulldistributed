@@ -1,0 +1,24 @@
+{
+   "name" : "Test App",
+   "nodes" : [
+      {
+         "function" : "worst()",
+         "label" : "Test App",
+         "id" : "node1",
+         "depends" : [
+            "node2",
+            "node3"
+         ]
+      },
+      {
+         "function" : "fixed('OK', '')",
+         "label" : "Node 1",
+         "id" : "node2"
+      },
+      {
+         "function" : "fixed('OK', '')",
+         "label" : "Node 2",
+         "id" : "node3"
+      }
+   ]
+}

@@ -1,0 +1,13 @@
+[Unit]
+Description=Naemon Core
+BindTo=network.target
+Wants=proxy-to-livestatus.socket status-dat-server.socket
+
+[Service]
+User=naemon
+Restart=on-failure
+ExecStart=/usr/bin/naemon /etc/naemon/naemon.cfg
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

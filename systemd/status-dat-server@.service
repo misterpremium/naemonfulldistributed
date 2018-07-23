@@ -1,0 +1,13 @@
+[Unit]
+Description=status
+BindTo=network.target
+
+
+[Service]
+ExecStart=/usr/bin/cat /var/lib/naemon/status.dat
+StandardInput=socket
+
+
+[Install]
+WantedBy=multi-user.target
+

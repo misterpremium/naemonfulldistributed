@@ -1,0 +1,7 @@
+[Unit]
+Requires=naemon.service
+After=naemon.service
+
+[Service]
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd /var/cache/naemon/live
+#ExecStart=/usr/bin/unixcat /var/cache/naemon/live

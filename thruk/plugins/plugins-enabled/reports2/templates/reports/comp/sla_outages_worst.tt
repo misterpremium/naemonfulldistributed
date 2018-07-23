@@ -1,0 +1,13 @@
+﻿[% worst = sort_by_key(out, 'duration').reverse %]
+[% page_data = page_splice(worst, 12, param.max_worst_pages)  %]
+[% FOREACH datablock = page_data %]
+  [% WRAPPER 'reports/comp/page_standard.tt' pagetitle = loc("Worst Outages") %]
+    [% FOREACH o = datablock %]
+      <div class="outages">
+        [% format_date(o.start, reportDateTimeFormat) %] - [% format_date(o.real_end, reportDateTimeFormat) %]
+        <span class="duration">([% duration(o.duration) %])</span>
+      </div>
+      <div class="output">[% o.plugin_output %]</div>
+    [% END %]
+  [% END %]
+[% END %]

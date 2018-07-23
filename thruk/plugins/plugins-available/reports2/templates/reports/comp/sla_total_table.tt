@@ -1,0 +1,21 @@
+﻿<table class="availability_details totals">
+  <tr>
+    <th>[% loc("Average Availability") %]</th>
+    [% value  = round_decimals(data.percent, param.decimals) %]
+    <td class="[% IF value < param.sla %]sla_nok[% END %]">[% IF data.percent == -1 %]&nbsp;[% ELSE %][% value %]%[% END %]</td>
+  </tr>
+  <tr>
+    <th>[% loc("Total Uptime") %]</th>
+    <td>[% duration(data.time.available) %]</td>
+  </tr>
+  <tr>
+    <th>[% loc("Total Downtime") %]</th>
+    <td>[% duration(data.time.unavailable) %]</td>
+  </tr>
+  [% IF data.time.time_indeterminate_outside_timeperiod > 0 %]
+  <tr>
+    <th>[% loc("Out of Scope") %]</th>
+    <td>[% duration(data.time.time_indeterminate_outside_timeperiod) %]</td>
+  </tr>
+  [% END %]
+</table>

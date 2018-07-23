@@ -1,0 +1,40 @@
+﻿[% PROCESS _header.tt css="plugins/business_process/bp-${version}-${filebranch}.css"
+                      js=["plugins/business_process/bp-${version}-${filebranch}.js",
+                          "plugins/business_process/bp-ie-fixes.js",
+                          "plugins/business_process/dagre-0.4.6/dagre.min.js"
+                         ]
+%]
+[% PROCESS _message.tt %]
+
+[% UNLESS minimal %]
+<table border="0" width="100%" cellspacing="0" cellpadding="0" class="infoboxrow">
+  <tr>
+    <td align="left" valign="top" width="33%">
+      [% PROCESS _infobox.tt %]
+    </td>
+    <td align="center" valign="top" width="33%">
+      <br><br>
+      <div align="center" class='dataTitle'>
+        <span id="subtitle">[% subtitle %]</span>
+        [% IF editmode %]<br><span style="color: #EB6900">(Edit-Mode)</span>[% END %]
+        [% IF testmode && !editmode %]<br><span style="color: #EB6900">(Business-Impact-Analysis-Mode)</span>[% END %]
+      </div>
+    </td>
+    <td align="right" valign="bottom" width="33%">
+      [% PROCESS _help.tt topic = "business_process" %]
+    </td>
+  </tr>
+</table>
+[% END %]
+
+[% content %]
+
+<script type="text/javascript">
+<!--
+  var bp_no_menu = '[% no_menu %]';
+  var editmode   = [% editmode %];
+  jQuery(document).ready(function() {
+    init_bp_buttons();
+  });
+-->
+</script>
