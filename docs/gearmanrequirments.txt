@@ -1,0 +1,183 @@
+
+
+Para instalar el gearman, tanto en worker como en job server sera necesario el paquete gcc que luego deberá ser desinstalado una vez finalizado el proceso de intalación del gearman
+
+
+
+
+
+Descarga paquetes rpm 
+
+
+
+https://mod-gearman.org/download/v1.4.2/rhel6/x86_64/
+
+
+Instalar obligatoriamente 3 el debug es opcional tanto con el nagios como el worker deben tener los mismo paquetes
+
+yum install gearmand
+
+gearmand v0.33 ~ v.025
+Dependencies Resolved
+
+=============================================================================================================================================================
+ Package                                      Arch                          Version                                     Repository                      Size
+=============================================================================================================================================================
+Installing:
+ gearmand                                     x86_64                        0.33-1                                      Gearman                         83 k
+Installing for dependencies:
+ boost-program-options                        x86_64                        1.41.0-11.el6_1.2                           base                           105 k
+ libevent                                     x86_64                        1.4.13-4.el6                                base                            66 k
+
+Transaction Summary
+=============================================================================================================================================================
+Install       3 Package(s)
+
+yum install gearmand-server
+
+Gearmand-server
+
+=============================================================================================================================================================
+ Package                                     Arch                               Version                            Repository                           Size
+=============================================================================================================================================================
+Installing:
+ gearmand-server                             x86_64                             0.33-1                             Gearman                              89 k
+
+Transaction Summary
+=============================================================================================================================================================
+Install       1 Package(s)
+
+
+    Arrancar/Parar
+    	Centos 6
+		gearmand -d -l /var/log/gearmand/gearmand.log -R
+		/etc/init.d/gearmand stop
+		Centos 7
+		systemctl satart/stop gearmnad
+
+
+yum install mod_gearman
+
+mod_gearman v 1.4.2
+
+Dependencies Resolved
+
+=============================================================================================================================================================
+ Package                                      Arch                          Version                                     Repository                      Size
+=============================================================================================================================================================
+Installing:
+ gearmand                                     x86_64                        0.33-1                                      Gearman                         83 k
+Installing for dependencies:
+ boost-program-options                        x86_64                        1.41.0-11.el6_1.2                           base                           105 k
+ libevent                                     x86_64                        1.4.13-4.el6                                base                            66 k
+
+Transaction Summary
+=============================================================================================================================================================
+Install       3 Package(s)
+
+
+
+
+
+
+	Parar/Arrancar
+		Centos 6
+		/etc/init.d/mod_gearman stop/start/status
+		Centos 7
+		systemctl stop/start/status/reload mod-gearman-worker
+
+
+
+Tanto en el fichero /etc/mod_gearman/mod_gearman_neb.conf como en el fichero /etc/mod_gearman/mod_gearman-worker.conf especificar el path del keyfile
+
+keyfile=/etc/mod_gearman/secret.txt
+
+
+
+Añadir esta linea al nagios.cfg el broker module es el .o del mod, el keyfile debe ser el mismo que hemos configurado en el gearman, y el config module es la ruta a la configuración del mod
+
+broker_module=/usr/lib64/mod_gearman/mod_gearman.o keyfile=/etc/mod_gearman/secret.txt server=darthmaul eventhandler=yes hosts=yes services=yes config=/etc/mod_gearman/mod_gearman_neb.conf
+
+
+
+En el fichero de configuración de /etc/mod_gearman/mod_gearman_neb.conf añadir en hostgroups el grupo de server que va a monitorizar el worker el hostgroup se toma de los .cfg donde se haya definido los hosts y el hosts group al que pertenecen.
+
+
+
+En los workers se ha de configurar los mismos ficheros que en el job server, pero en vez de apuntar a localhost deberan apuntar al jobserver
+
+
+server=jobservername:4730
+
+y en los hosts grops se debera poner el que se quiera trabajar
+
+hostgrup=grupo1
+
+
+
+
+#################################################################
+
+		IMPORTANTE
+
+#################################################################
+
+
+Instalar los paquetes compialdos si se dispone de ellos
+
+Para que los workers ejecuten los checks sera necesario instalarlos en ellos.
+Para centos 6 y 7 ejecutar
+
+*Opcion 1
+
+yum install nagios-plugins-all
+
+
+
+
+
+
+
+
+*Opcion 2
+
+
+Eston son los paquetes comunes para todos los checks, si se quiere un check especifico puede que requiera un paquete determinado
+
+
+
+
+
+yum install -y gcc glibc glibc-common make gettext automake autoconf wget openssl-devel net-snmp net-snmp-utils epel-release
+yum install -y perl-Net-SNMP
+
+
+bajamos los sources de los plugins
+
+cd /tmp
+wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz
+tar zxf nagios-plugins.tar.gz
+
+
+Ahora compilamos e insatalamos
+
+
+
+
+cd /tmp/nagios-plugins-release-2.2.1/
+./tools/setup
+./configure
+make
+make install
+
+##
+
+Des pues percatarnos de que la ruta a los checks configurada en el naemon.cfg o nagios.cfg sea la misma en esta máquina, ya que el worker busca los checks donde le diga el job server
+
+
+Si no esta en la ruta deseada, creamos la ruta a mano y hacemos un link al directorio donde se han instalado.
+
+
+
+Y revisar el rotado de los logs y configurar la ruta donde deja los logs el gearmand
+

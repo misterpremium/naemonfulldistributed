@@ -1,0 +1,118 @@
+Instalacion thruk
+
+https://www.thruk.org/documentation/install.html
+
+
+Intalar, el apache y el mod_fcgid.rpm
+
+Instalar los rpms thruk
+
+
+1. Libthruk:
+===========================================================================================================================================
+ Package                    Arch                   Version                           Repository                                       Size
+===========================================================================================================================================
+Installing:
+ libthruk                             x86_64              2.20-1.el7.centos               /libthruk-2.20-1.rhel7.x86_64               35 M
+Installing for dependencies:
+ fontconfig                           x86_64              2.10.95-11.el7                  base                                       229 k
+ fontpackages-filesystem              noarch              1.44-8.el7                      base                                       9.9 k
+ gd                                   x86_64              2.0.35-26.el7                   base                                       146 k
+ libX11                               x86_64              1.6.5-1.el7                     base                                       606 k
+ libX11-common                        noarch              1.6.5-1.el7                     base                                       164 k
+ libXau                               x86_64              1.0.8-2.1.el7                   base                                        29 k
+ libXpm                               x86_64              3.5.12-1.el7                    base                                        55 k
+ libjpeg-turbo                        x86_64              1.2.90-5.el7                    base                                       134 k
+ libpng                               x86_64              2:1.5.13-7.el7_2                base                                       213 k
+ libxcb                               x86_64              1.12-1.el7                      base                                       211 k
+ lyx-fonts                            noarch              2.2.3-1.el7                     epel                                       159 k
+ perl-Data-Dumper                     x86_64              2.145-3.el7                     base                                        47 k
+
+
+
+2. Thruk base
+
+===========================================================================================================================================
+ Package                    Arch                   Version                           Repository                                       Size
+===========================================================================================================================================
+Installing:
+ thruk-base                 x86_64                 2.20-1                            /thruk-base-2.20-1.rhel7.x86_64                  21 M
+Installing for dependencies:
+ mod_fcgid                  x86_64                 2.3.9-4.el7_4.1                   base                                             79 k
+
+Transaction Summary
+===========================================================================================================================================
+
+
+3.Thruk plugin reporting
+
+===========================================================================================================================================
+ Package                            Arch               Version               Repository                                               Size
+===========================================================================================================================================
+Installing:
+ thruk-plugin-reporting             x86_64             2.20-1                /thruk-plugin-reporting-2.20-1.rhel7.x86_64              65 M
+
+Transaction Summary
+===========================================================================================================================================
+
+
+4. Thruk
+
+===========================================================================================================================================
+ Package                    Arch                        Version                      Repository                                       Size
+===========================================================================================================================================
+Installing:
+ thruk                      x86_64                      2.20-1                       /thruk-2.20-1.rhel7.x86_64                      0.0  
+
+Transaction Summary
+===========================================================================================================================================
+
+
+
+
+
+Para configurar thrunk, hay qu ecrear el usuario de acceso, el mismo que el de nagios y autorizarlo para que pueda ver la configuracion modificar  las siguientes lineas al fichero /etc/thruk/cgi.cfg substituyendo thrukadmin por nagiosadmin
+
+
+authorized_for_system_information=nagiosadmin
+authorized_for_configuration_information=nagiosadmin
+authorized_for_system_commands=nagiosadmin
+authorized_for_all_services=nagiosadmin
+authorized_for_all_hosts=nagiosadmin
+authorized_for_all_service_commands=nagiosadmin
+authorized_for_all_host_commands=nagiosadmin
+
+Modificar el /etcc/thruk/htpasswd para que sea el mismo que el nagios. Si esta en la misma maquina que el nagios hacemos que apunte al mismo fichero que el del nagios en el thruk.conf 
+
+htpasswd = /usr/local/nagios/etc/htpasswd.user
+
+
+
+Hay que hacer lo mismo con el fichero de configuracion del apache /etc/httpd/conf.d/thruck.conf, modificando la linea
+
+AuthUserFile  /usr/local/nagios/etc/htpasswd.users
+
+Para que se apliquen los cambios habra que riinicar el servicio y graceful a la instancia del apache,
+para reiniciar thruk /etc/init.d/thruk restart
+
+Para configurar la conexión al servidor remoto se ha de acceder a la consola administrativa de thrunk y ir a la opcion configuración
+
+http://hostname/thruk
+
+Usa el puerto 80
+
+
+Una vez dentro de la consolo, seberemos ir al apartado de configuracion, en la volumna de la izquierda la penultima opcion, configurar la conexion mediante livestatus
+
+servername:7556
+
+Probamos la conexión, si funcina guardamos la configuración y ahora desde el thrunk podemos ver los chequeos
+
+
+
+
+
+
+
+
+

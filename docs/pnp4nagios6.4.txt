@@ -1,0 +1,109 @@
+yum install  perl-Time-HiRes
+
+
+Dependencies Resolved                                                                             
+==============================================================                                     
+ Package                Arch    Version           Repository                                       
+                                                         Size                                      
+==============================================================                                     │php-gd-5.4.16-45.el7.x86_
+Installing:                                                                                        
+ perl-Time-HiRes        x86_64  4:1.9721-144.el6  base   49 k                                      │pixman-0.34.0-1.el7.x86_6
+Updating for dependencies:                                                                        
+ perl                   x86_64  4:5.10.1-144.el6  base   10 M                                      │pnp4nagios-0.6.25-1.el7.x
+ perl-Module-Pluggable  x86_64  1:3.90-144.el6    base   41 k                                     
+ perl-Pod-Escapes       x86_64  1:1.04-144.el6    base   33 k                                           
+ perl-Pod-Simple        x86_64  1:3.13-144.el6    base  213 k                                      │rrdtool-1.4.8-9.el7.x86_6
+ perl-libs              x86_64  4:5.10.1-144.el6  base  579 k                                      
+ perl-version           x86_64  3:0.77-144.el6    base   52 k                                      │rrdtool-perl-1.4.8-9.el7.
+                                                                                                   
+Transaction Summary                                                                                │t1lib-5.1.2-14.el7.x86_64
+==============================================================                                     
+Install       1 Package(s)        
+
+
+Dependencies Resolved                                                                   [1430/1829]│nagios-common-4.3.4-5.el7
+                                                                                                  
+==============================================================                                     │nss-tools-3.36.0-5.el7_5.
+ Package                    Arch   Version         Repository                                      
+                                                         Size                                      
+==============================================================                                     
+Installing:                                                                                        │php-5.4.16-45.el7.x86_64.
+ rrdtool                    x86_64 1.3.8-10.el6    base 294 k                                      
+Installing for dependencies:                                                                       │php-cli-5.4.16-45.el7.x86
+ cairo                      x86_64 1.8.8-6.el6_6   base 309 k                                      
+ dejavu-fonts-common        noarch 2.33-1.el6      base  63 k                                      │php-common-5.4.16-45.el7.
+ dejavu-lgc-sans-mono-fonts noarch 2.33-1.el6      base 397 k                                     
+ dejavu-sans-mono-fonts     noarch 2.33-1.el6      base 474 k                                      │php-gd-5.4.16-45.el7.x86_
+ fontpackages-filesystem    noarch 1.41-1.1.el6    base 8.8 k                                      
+ libXft                     x86_64 2.3.2-1.el6     base  55 k                                      │pixman-0.34.0-1.el7.x86_6
+ libXrender                 x86_64 0.9.10-1.el6    base  24 k                                      
+ libthai                    x86_64 0.1.12-3.el6    base 183 k                                      │pnp4nagios-0.6.25-1.el7.x
+ pango                      x86_64 1.28.1-11.el6   base 351 k                                      
+ pixman                     x86_64 0.32.8-1.el6    base 243 k                                            
+Updating for dependencies:                                                                         │rrdtool-1.4.8-9.el7.x86_6
+ libX11                     x86_64 1.6.4-3.el6     base 587 k                                      
+ libX11-common              noarch 1.6.4-3.el6     base 171 k                                      │rrdtool-perl-1.4.8-9.el7.
+ libX11-devel               x86_64 1.6.4-3.el6     base 983 k                                      
+ libxcb                     x86_64 1.12-4.el6      base 180 k                                      │t1lib-5.1.2-14.el7.x86_64
+ libxcb-devel               x86_64 1.12-4.el6      base 1.1 M    
+
+
+
+Descomprimir y compilar el tar.gz
+
+
+General Options:
+  -------------------------         -------------------
+  Nagios user/group:                nagios nagios
+  Install directory:                /usr/local/pnp4nagios
+  HTML Dir:                         /usr/local/pnp4nagios/share
+  Config Dir:                       /usr/local/pnp4nagios/etc
+  Location of rrdtool binary:       /usr/bin/rrdtool Version 1.3.8
+  RRDs Perl Modules:                *** NOT FOUND ***
+  RRD Files stored in:              /usr/local/pnp4nagios/var/perfdata
+  process_perfdata.pl Logfile:      /usr/local/pnp4nagios/var/perfdata.log
+  Perfdata files (NPCD) stored in:  /usr/local/pnp4nagios/var/spool
+
+  Web Interface Options:
+  -------------------------         -------------------
+  HTML URL:                         http://localhost/pnp4nagios
+  Apache Config File:               /etc/httpd/conf.d/pnp4nagios.conf
+
+Para poder los modulos necesarios de perl hay que instalar cpan
+
+=============================================================================================================================
+ Package                                Arch                  Version                              Repository           Size
+=============================================================================================================================
+Installing:
+ perl-CPAN                              x86_64                1.9402-144.el6                       base                247 k
+Installing for dependencies:
+ db4-cxx                                x86_64                4.7.25-22.el6                        base                589 k
+ db4-devel                              x86_64                4.7.25-22.el6                        base                6.6 M
+ gdbm-devel                             x86_64                1.8.0-39.el6                         base                 26 k
+ perl-Digest-SHA                        x86_64                1:5.47-144.el6                       base                 65 k
+ perl-ExtUtils-MakeMaker                x86_64                6.55-144.el6                         base                294 k
+ perl-ExtUtils-ParseXS                  x86_64                1:2.2003.0-144.el6                   base                 46 k
+ perl-Test-Harness                      x86_64                3.17-144.el6                         base                232 k
+ perl-devel                             x86_64                4:5.10.1-144.el6                     base                424 k
+Updating for dependencies:
+ db4                                    x86_64                4.7.25-22.el6                        base                564 k
+ db4-utils                              x86_64                4.7.25-22.el6                        base                131 k
+ gdbm                                   x86_64                1.8.0-39.el6                         base                 29 k
+
+Transaction Summary
+=============================================================================================================================
+Install       9 Package(s)
+Upgrade       3 Package(s)
+
+
+
+
+Y acontinuacion instalar los modulos de perl requeridos
+El primero de todos es el YAML, qu ehabra que instalarlo desde los sources, por qu esi no da fallo, ya que se requiere el yaml para usar el cpan, cuando el yaml este instalado se procedera a lanzar el comando que instala el modulo de gearman, durante este proceso pedira intalar diversos modulos, le damos a yes, para que pueda instalar el gearman
+
+cpan Gearman::Worker
+
+
+
+instalar php-gd.x86_64 para poder dibujar los graficos
+

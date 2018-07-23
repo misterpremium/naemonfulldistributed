@@ -1,0 +1,148 @@
+InstalacionLiveStatus
+
+instalar xinetd
+
+Instalar la version 1.2.0p4 para CentOS 6.4
+
+
+
+
+
+Se instala desde el repositorio de r2-d2
+
+
+ Instalar gcc-c++
+
+===========================================================================================================================================
+ Package                                Arch                          Version                            Repository                   Size
+===========================================================================================================================================
+Installing:
+ gcc-c++                                x86_64                        4.4.7-3.el6                        base                        4.7 M
+Installing for dependencies:
+ libstdc++-devel                        x86_64                        4.4.7-3.el6                        base                        1.6 M
+
+Transaction Summary
+===========================================================================================================================================
+Install       2 Package(s)
+
+Descomprimir el mk-livestatus.tar.gz y ejecutar
+
+./configure
+make
+make install
+
+
+
+Añadir la siguiente linea al nagios.cfg
+
+
+broker_module=/usr/local/lib/mk-livestatus/livestatus.o /usr/local/nagios/var/rw/live
+event_broker_options=-1
+
+
+Para abrir el puerto 6557 habra crear un servicio que escuche en ese puerto y ejecute los comandos necesarios para que thruk pueda tomar los datos del status.dat
+
+Opcion 1 ## y poco recomendada
+
+en /etc/xinet.d/
+
+creaar el fichero livestatus con la configuracion correspondiente
+
+
+
+service livestatus
+{
+	type		= UNLISTED
+	port		= 6557
+	socket_type	= stream
+	protocol	= tcp
+	wait		= no
+# limit to 100 connections per second. Disable 3 secs if above.
+	cps             = 100 3
+# set the number of maximum allowed parallel instances of unixcat.
+# Please make sure that this values is at least as high as
+# the number of threads defined with num_client_threads in
+# etc/mk-livestatus/nagios.cfg
+        instances       = 500
+# limit the maximum number of simultaneous connections from
+# one source IP address
+        per_source      = 250
+# Disable TCP delay, makes connection more responsive
+	flags           = NODELAY
+	user		= nagios
+	server		= /usr/local/bin/unixcat
+	server_args     = /usr/local/nagios/var/rw/live 
+# configure the IP address(es) of your Nagios server here:
+#	only_from       = 127.0.0.1 10.0.20.1 10.0.20.2
+	disable		= no
+}
+
+
+
+y reiniciar el xinetd
+
+
+
+Obción 2 crear un servicio con systemd
+
+
+
+
+Para crear un servicio con systemd habra que crear varios archivos, en primer lugar habra que parar y deshabilitar el naemon.service por que vamos a crear uno nuevo que haga lo  que necesitamos
+
+
+
+creamos un naemon.service con el siguiente contenido
+
+
+[Unit]
+Description=Naemon Core
+BindTo=network.target
+Wants=proxy-to-livestatus.socket status-dat-server.socket
+
+[Service]
+User=naemon
+Restart=on-failure
+ExecStart=/usr/bin/naemon /etc/naemon/naemon.cfg
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+a continuación creamos el archivo proxy-to-livestatus.service
+
+[Unit]
+Requires=naemon.service
+After=naemon.service
+
+[Service]
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd /var/cache/naemon/live
+
+
+
+####proxy-to-livestatus.socket
+
+[Unit]
+StopWhenUnneeded=true
+
+[Socket]
+ListenStream=6557
+
+####status-dat-server.socket
+
+
+[Socket]
+ListenStream=1234
+Accept=yes
+
+
+bilitamos los servicios con systemctl enable nombre.service
+
+
+y habilitamos el shocket systemctl enable --now proxy-to-livestatus.socket
+
+
+
+

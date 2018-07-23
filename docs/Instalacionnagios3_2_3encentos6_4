@@ -1,0 +1,74 @@
+Instalación nagios 3.2.3 en centos 6.4
+
+para el correcto funcionamiento del servicio habra que deshabilitar las iptables tanto ipv4 como ipv6
+y en el archivo /etc/selinux/config desavilitar selinux, para que no nos de error 500 al intentar ejecutar los .cfg /usr/local/nagios/sbin
+
+
+
+
+Instalar los paquetes gcc y make 
+
+La intalacion requiere de las de pendencias de httpd, php, perl y libpng
+
+Compilar los paquetes
+
+
+nagios-3.2.3.tar.gz
+nagios-plugins-1.4.11.tar.gz
+
+
+
+Para el nagios
+
+./configure
+make all
+Y despues ejecutar los siguientes makes, si da error por el usuario nagios lo crearemos a mano, añadiendolo al grupo nagios y nagiocmd
+
+
+ make install
+     - This installs the main program, CGIs, and HTML files
+
+  make install-init
+     - This installs the init script in /etc/rc.d/init.d
+
+  make install-commandmode
+     - This installs and configures permissions on the
+       directory for holding the external command file
+
+  make install-config
+     - This installs *SAMPLE* config files in /usr/local/nagios/etc
+       You'll have to modify these sample files before you can
+       use Nagios.  Read the HTML documentation for more info
+       on doing this.  Pay particular attention to the docs on
+       object configuration files, as they determine what/how
+       things get monitored!
+
+  make install-webconf
+     - This installs the Apache config file for the Nagios
+       web interface
+
+
+Añadiremos al usuario apache al grupo nagiocmd y configuraremos a contraseña del usuario nagiosadmin del servidor web en /etc/httpd/conf.d/nagios.conf
+
+para ello ejecutaremos el comando htpasswd -c /usr/local/nagios/etc/htpasswd.user nagiosadmin
+
+e introduciremos la nueva contraseña del usuario para posteriormente poder acceder a la consola administrativa del nagios.
+
+
+
+Nagios Pluguins
+
+
+	Para compilarlo ejecutaremos
+
+	./configure
+
+	make
+
+	make install
+
+Comprobaremos que $USER! apunta a la ruta donde se han instalado los checks en mi caso es en /usr/local/nagios/libexec y en el archivo  resource.cfg aparece la siguiente linea
+
+$USER1$=/usr/local/nagios/libexec
+
+Por lo que esta apuntando a la ruta correcta.
