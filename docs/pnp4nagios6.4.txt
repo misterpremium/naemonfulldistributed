@@ -97,13 +97,64 @@ Upgrade       3 Package(s)
 
 
 
-
+###Opcion 1
 Y acontinuacion instalar los modulos de perl requeridos
 El primero de todos es el YAML, qu ehabra que instalarlo desde los sources, por qu esi no da fallo, ya que se requiere el yaml para usar el cpan, cuando el yaml este instalado se procedera a lanzar el comando que instala el modulo de gearman, durante este proceso pedira intalar diversos modulos, le damos a yes, para que pueda instalar el gearman
 
 cpan Gearman::Worker
 
+cpan Crypt::Rijndael
+
+###Opcion 2 Centos75
+  Descargar el perl6.tar.gz de r2 y descomprimirtlo en la ruta de las librerias de perl, para qu efuncione el pnp_gearmnan habra que modificar el .pl escribiendo la ruta a las librerias y añadiendo el use de los modulos Gearman::Worker y Crypt::Rijndael.
+  Una vez echo esto arrancara sin problemas.
+  La lineas a añadir son:
+
+    use lib '/usr/lib64/perl5/x86_64-linux-thread-multi/';
+    use lib '/usr/local/share/perl5/Cry';
+    use Crypt::Rijndael;
+    use Gearman::Worker;
+
 
 
 instalar php-gd.x86_64 para poder dibujar los graficos
+process_performance_data=1
 
+Modificar el el modules.conf del gearman y poner la opcion perfdata=yes
+En el archivo /usr/local/pnp4nagios/etc/proces_perfdata.cfg poner la ruta al keyfile que usa el gearman y esecificar el job server.
+
+
+
+
+#################################
+
+
+
+para acceder via web a las graficas habra que compartir las rutas mediante samba para que la maquina con el frontal pueda ejecurtar los php del pnp habra que añadir el .conf de pnp en el apache y modificar las rutas de los comandos en el naemon.
+Habrá que crear dos alias uno por cada nodo y en cada configuracion de naemon habra que referirse  a ellos de forma relativacat  user
+instalamos samba
+
+yum install samba
+
+Dependencias resueltas
+
+======================================================================================================================================================
+ Package                                    Arquitectura                   Versión                                 Repositorio                  Tamaño
+======================================================================================================================================================
+Instalando:
+ samba                                      x86_64                         4.7.1-6.el7                             base                         661 k
+Instalando para las dependencias:
+ pytalloc                                   x86_64                         2.1.10-1.el7                            base                          17 k
+ samba-common-tools                         x86_64                         4.7.1-6.el7                             base                         463 k
+ samba-libs                                 x86_64                         4.7.1-6.el7                             base                         275 k
+
+Resumen de la transacción
+======================================================================================================================================================
+Instalar  1 Paquete (+3 Paquetes dependientes)
+
+
+
+Para que el naemon escriba los perfdata habra que añadir la siguiente linea al naemon.cfg 
+
+
+process_performance_data=1
