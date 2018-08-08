@@ -1,0 +1,197 @@
+Instalación de merlin
+
+
+Para instalar merlin habra de ser compilado ya que no existen paquetes precompilados por la comunidad.
+
+
+
+Para ello descargamos del repositorio de git el source 
+
+
+Nos conectmos a la máquina de compilacion para compilar el programa.
+
+
+Los paquetes necesarios son: git gcc autoconf  automake glib-2-devel check-devel libdbi-devel libtool naemon-devel gperf
+
+
+Las daemon devels son necesarias tambien para su funcionamiento.
+
+
+Habra que instalar una base de datos para poder intalar el servicio, una vez nstalado se podra desinstalar la base de datos, por que no es necesaria para su funcionamiento.
+
+
+
+para compilarlo ejecutamos
+
+./autogen.sh
+
+#este escrip nos tra el configure de un gitcd
+make 
+
+
+#### a partir de este paso se ejecuta en la maquina que tenga el naemon
+make install#en este paso puede dar errores al buscar los .sql, si es el caso habra que crear la ruta que nos diga el error, en mi caso /usr/local/share/merlin/  y copiar la carpeta sql que esta en /tm/merlin
+
+cp -r /tmp/merlin/sql /usr/local/share/merlin
+
+
+
+Unsa vez instalado deberemos configurar el servicio, para ello vamos a /usr/local/etc/merlin y editamos el fichero merlin.conf
+
+
+importante poner la opcion enable = no en el apartado de database y revisar que las rutas esten correctas.
+
+
+
+
+y añadir el peer para indicar cual es el otro miembro del cluster
+
+		peer master2.example.com {
+		  address = 192.168.1.2;
+		  port = 15551; # optional, since 15551 is the default
+		 }
+
+
+despues mover el .service de /tm/merlin a /usr/lib/systemd/system
+
+
+Hay que camiar el owner al directorio /usr/local/var/lib/merlin para que mueda escribir ahi el .sock, por defecto tienen el owner root, por lo que no puede escribir.
+
+
+Y habilitar el servicio.
+
+mover el merlin.cfg que esta en /etc/naemon a la carpeta modules.conf
+
+
+Iniciar los habilitar los servicios e iniciarlos.
+
+#######################################################################
+
+Instalacion comando mon
+
+
+Este paquete de perl es requerido para el funcionamiento del comando
+
+yum install perl-Sys-Syslog
+
+
+Habra que instalar el modulo de perl Time::Period, bien con el cpan o trayendolo de una maquina en la cual haya sido compilado
+
+Ahora habra que compiolar el programa etramaos en la carpeta mon.d editamos el fichero make file y modificamos la siguiente lineacat la siguiente linea para que use el grupo naemon
+
+install -g naemon -m 02555 dialin.monitor.wrap $(MONPATH)/mon.d/
+
+ y ejecutamos
+
+[root@tarfful mon.d]# make
+gcc -o rpc.monitor -O2 -Wall -g  rpc.monitor.c
+gcc -o dialin.monitor.wrap -O2 -Wall -g  \
+        -DREAL_DIALIN_MONITOR=\"/usr/lib/mon/mon.d/dialin.monitor\" \
+        dialin.monitor.wrap.c
+[root@tarfful mon.d]# vi Makefile
+[root@tarfful mon.d]# make install
+install -d /usr/lib/mon/mon.d
+install rpc.monitor /usr/lib/mon/mon.d/
+install -g naemon -m 02555 dialin.monitor.wrap /usr/lib/mon/mon.d/
+
+
+Copiar el ficehro $dir/mon-1.2.0/etc/example.cf  a ./mon.cf
+
+y editarlo, debe quedar asi
+
+habra que crear el naemon-services.monitor en mon.d
+
+
+
+#!/usr/bin/perl -w
+
+use Getopt::Std;
+
+my %opt;
+getopts ("p:", \%opt);
+
+my $monitors_path = '/opt/mon-1.2.0/mon.d';
+my $mon_check;
+my $host;
+$host = $ARGV[0];
+
+my %monitors = ('gearman' => $host, 'http' => $host, 'livestatus' => '');
+foreach my $monitor (keys %monitors){
+        #print "Ejecutando: $monitors_path/$monitor.monitor ".$monitors{$monitor}."\n";
+        $mon_check = `$monitors_path/$monitor.monitor $monitors{$monitor}`;
+        if (($? >> 8) == 1){
+                print chomp($mon_check);
+                exit 1;
+        }
+}
+
+print "Naemon services are running";
+
+exit 0;
+
+
+
+
+basedir    = /opt/mon-1.2.0
+cfbasedir    = /opt/mon-1.2.0/etc
+alertdir   = /opt/mon-1.2.0/alert.d
+mondir     = /opt/mon-1.2.0/mon.d
+statedir   = /opt/mon-1.2.0/state.d
+logdir     = /cosmos/var/log
+dtlogfile  = mon-downtime.log
+authfile   = /opt/mon-1.2.0/etc/auth.cf
+authtype   = trustlocal
+dtlogging   = yes
+maxprocs    = 20
+histlength = 100
+randstart = 60s
+startupalerts_on_reset=yes
+
+hostgroup naemon 16.3.252.240
+
+watch naemon
+    service naemon-services
+        interval 10s
+        monitor naemon-services.monitor
+        period wd {Mon-Sun}
+            alert bring-ha-down.alert
+            upalert bring-ha-up.alert
+            alertafter 1
+            numalerts 1
+            no_comp_alerts
+
+
+############################
+
+
+Una vez echo eto ejecutamos 
+
+./mon -f -c mon.cf -b `pwd`
+ 
+
+ Y ya se podra utilizar el comando mon
+
+
+
+
+Si los nodos no sincronizan habra que hacerlo de forma mual, para ello habra que hacer lo siguiente:
+	-Parar el naemon y el merlin
+	-Dejar las configuraciones identicas en ambos nodos, copiamos lo de uno al otro
+	-Ponemos la misma hora en los dos nodos
+	-Copiar el fichero /var/lib/naemon/retention.dat de una maquina a otra
+	-Iniciar tanto el naemon como el merlin a la vez en ambas máquinas
+		systemctl start naemon && systemctl start merlind
+
+Errores
+
+NODESTATE: chuwi: STATE_NEGOTIATING -> STATE_NONE: Incompatible object config (sync triggered)
+
+	Solucion: Igualar las configuraciones del naemon.
+
+
+	
+
+
+
+
+
